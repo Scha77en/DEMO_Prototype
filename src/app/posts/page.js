@@ -1,6 +1,11 @@
 import redisClient from "@/lib/redis";
+import dynamic from "next/dynamic";
 
 export const revalidate = 0;
+
+const PostList = dynamic(() => import('@/components/Postlist'), {
+    loading: () => <p>Loading posts...</p>
+});
 
 export default async function PostsPage() {
     const cacheKey = "posts:all";
@@ -25,14 +30,7 @@ export default async function PostsPage() {
     return (
         <main className="p-4">
             <h1 className="text-2xl font-bold mb-4">Posts (cached)</h1>
-            <ul className="space-y-2">
-                {posts.slice(0, 10).map((post) => (
-                    <li key={post.id} className="border p-2 rounded">
-                        <h2 className="font-semibold">{post.title}</h2>
-                        <p className="text-sm text-gray-600">{post.body}</p>
-                    </li>
-                ))}
-                </ul>
+            <PostList posts={posts} />
         </main>
     );
 }
