@@ -1,3 +1,5 @@
+"use client";
+
 export default function PostList({ posts }) {
     return (
       <ul className="space-y-2">

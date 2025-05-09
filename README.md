@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Frontend Exercise
 
-## Getting Started
+A Next.js demo that fetches posts from a public API, caches them in Redis, and applies code-splitting for performance.
 
-First, run the development server:
+---
+
+## Architecture
+
+- **Next.js** (App Router) renders `/posts` server-side.
+- **Redis** (cache-aside) speeds up repeat fetches with a 60 s TTL.
+- **PostList** is a Client Component, loaded dynamically to keep the initial JS bundle small.
+
+## Quick Start
+
+
+Go inside the folder Demo-App
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd Demo-App
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Automated (recommended)
+Ensure `setup.sh` is executable:
+```bash
+chmod +x setup.sh
+```
+Then run
+```bash
+./setup.sh
+```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+This will check for the following :
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- The required tools (git, node, npm, docker, docker-compose).
+- It will create the '.env.local' file if not already created with 'REDIS_URL=redis://localhost:6379'
+- It will start the Redis via Docker.
+- Will install the Dependencies.
+- Will ask you if you want to build and start the app.
 
-## Learn More
+### Manual
 
-To learn more about Next.js, take a look at the following resources:
+If you prefer setuping manually you can follow the next steps :
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1- Clone and Install
+```bash
+git clone <the-repo-ssh>
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm install
+```
 
-## Deploy on Vercel
+2- Start Redis
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+docker-compose up -d
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3- Build and Start
+
+Dev: --> http://localhost:3000
+```bash
+npm run dev
+```
+Prod:
+```bash
+npm run build && npm start
+```
+<br></br>
+
+## Environment, Docker
+
+- **Docker**:  
+  Contains a Redis container, can be started via `docker-compose up -d`.  
+
+- **Environment Variable**:  
+  The app uses a single env variable:  
+  `REDIS_URL=redis://localhost:6379` — automatically created by `setup.sh`.
+
+The REDIS_URL environment variable tells the app where to connect to Redis.
+`redis://localhost:6379` which means:
+
+- protocol: redis://
+
+- host: localhost
+
+- port: 6379 (the default Redis port)
+
+So the app can talk to the local Redis container running via Docker.
+
+## Performance
+
+### **Redis Fetch Times**
+
+#### **when you first visit : http:/localhost:3000/posts**
+
+***Cache MISS*** shows the very first request where your app has to reach out over the network.
+
+- in terminal:
+
+![Cache Miss](Demo-App/screenshots/cache_miss.png) 
+
+- on the web page:
+
+![First Requist](Demo-App/screenshots/first_requist_cache.png)
+
+
+#### **reloading**
+
+***Cache HIT*** shows repeat requests served in-memory by Redis—no network delay.
+
+- in terminal:
+
+![Cache Hit](Demo-App/screenshots/cache_hit.png)
+
+- on the web page:
+
+![Repeated requist](Demo-App/screenshots/repeated_requist_cache.png) 
+
+
+### **Dynamic Loading:**  
+  The post list UI (`PostList`) is extracted into its own client component and dynamically imported only when needed.  
+  
+  
+  **Why?**
+   
+   To Keep the initial JavaScript bundle smaller, so the page loads faster for first‐time visitors.
+
+   The gain is minimal in this small demo, but it becomes significant in larger applications with heavier UI.
+
+
+## Scaling Outline
+
+#### To handle thousands or millions of users, i can think of the following:
+
+- **Horizontal Scaling** which means Running multiple copies of the Next.js app behind a load balancer so traffic is spread across servers.
+
+- **Managed Redis with TTLs** Moving to a hosted Redis service (e.g. AWS ElastiCache) and keep using short TTLs (time-to-live) so cached data stays fresh but Redis can serve huge read volumes.
+
+- **CDN for Static Assets** Serving JavaScript, CSS and images via a Content Delivery Network so users worldwide download assets from the nearest edge location, cutting latency.
+
