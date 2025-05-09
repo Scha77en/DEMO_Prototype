@@ -33,10 +33,10 @@ export default async function PostsPage() {
   const fetchTime = Date.now() - start;
 
   return (
-    <main className="p-4">
+    <main className="p-4 min-h-screen bg-gradient-to-br from-black to-red-600 text-white">
       <h1 className="text-2xl font-bold mb-4 text-center">Posts (cached + split)</h1>
       <div className="flex justify-center mb-4">
-        <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-2 rounded">
+        <div className="bg-white text-black border border-blue-200 px-4 py-2 rounded">
           <span className="font-medium">Data fetch time:</span>{" "}
           <span className="font-mono font-bold">{fetchTime} ms</span>
         </div>

@@ -42,7 +42,7 @@ echo -e "${GREEN}✔  Dependencies installed.${NC}"
 
 # 5. (Optional) Build & start in production mode
 read -p "▶️  Would you like to build & start the app now? (y/N) " BUILD_NOW
-if [[ "${BUILD_NOW,,}" == "y" ]]; then
+if [[ "${BUILD_NOW}" == "y" ]]; then
   echo -e "${GREEN}🏗  Building production bundle...${NC}"
   npm run build
   echo -e "${GREEN}🚀  Starting production server...${NC}"
