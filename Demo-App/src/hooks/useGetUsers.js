@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 export function useGetUsers() {
   const [users, setUsers] = useState([]);
-  const [fetchTime, setFetchTime] = useState<number | null>(null);
+  const [fetchTime, setFetchTime] = useState(null);
 
   useEffect(() => {
     const fetchUsers = async () => {

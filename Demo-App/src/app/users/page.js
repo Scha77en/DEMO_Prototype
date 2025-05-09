@@ -5,8 +5,11 @@ import Link from "next/link";
 
 export default function UsersPage() {
   return (
-    <main className="p-4 min-h-[90vh] bg-gradient-to-br from-black to-red-600 text-white flex flex-col justify-between">
-      <UserList />
+    <main className="p-4 min-h-screen bg-gradient-to-br from-black to-red-600 text-white flex flex-col justify-between">
+      <div>
+        <h1 className="text-2xl font-bold mb-4 text-center">Users</h1>
+        <UserList />
+      </div>
       <div className="flex justify-center mt-4">
         <Link
           href="/"
