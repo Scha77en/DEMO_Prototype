@@ -8,12 +8,20 @@ export default function Home() {
       {/* Main content */}
       <main className="z-10 text-center p-8">
         <h1 className="text-4xl font-bold text-white mb-8">Welcome</h1>
-        <Link
-          href="/posts"
-          className="inline-block bg-white text-red-600 font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-red-50 transition-transform duration-200 hover:scale-105 active:scale-95"
-        >
-          Go to Posts
-        </Link>
+        <div className="flex flex-col gap-4">
+          <Link
+            href="/posts"
+            className="inline-block bg-white text-red-600 font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-red-50 transition-transform duration-200 hover:scale-105 active:scale-95"
+          >
+            Go to Posts
+          </Link>
+          <Link
+            href="/users"
+            className="inline-block bg-white text-red-600 font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-red-50 transition-transform duration-200 hover:scale-105 active:scale-95"
+          >
+            Go to Users
+          </Link>
+        </div>
       </main>
     </div>
   );
