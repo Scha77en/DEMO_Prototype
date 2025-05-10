@@ -1,12 +1,8 @@
-import dynamic from "next/dynamic";
 import { getRedisClient } from "@/lib/redis";
 import Link from "next/link";
+import PostList from "@/components/PostList";
 
 export const revalidate = 0;
-
-const PostList = dynamic(() => import("@/components/PostList"), {
-  loading: () => <p>Loading posts…</p>,
-});
 
 export default async function PostsPage() {
   const redisClient = await getRedisClient();
@@ -17,12 +13,15 @@ export default async function PostsPage() {
   let posts;
 
   if (cached) {
+    console.log(`🔍 [Redis] Cache HIT for key="${cacheKey}"`);
     posts = JSON.parse(cached);
   } else {
+    console.log(`🔍 [Redis] Cache MISS for key="${cacheKey}", fetching from API...`);
     const res = await fetch("https://jsonplaceholder.typicode.com/posts");
     if (!res.ok) throw new Error("Failed to fetch posts");
     posts = await res.json();
     await redisClient.setEx(cacheKey, 60, JSON.stringify(posts));
+    console.log(`🔧 [Redis] Stored key="${cacheKey}" in cache`);
   }
 
   const fetchTime = Date.now() - start;
