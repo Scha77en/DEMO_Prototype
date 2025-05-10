@@ -1,6 +1,5 @@
-"use client";
-
 import { useEffect, useState } from "react";
+import { getUsers } from "@/utils/api";
 
 export function useGetUsers() {
   const [users, setUsers] = useState([]);
@@ -11,10 +10,8 @@ export function useGetUsers() {
     const fetchUsers = async () => {
       const start = Date.now();
       try {
-        const res = await fetch("/api/users");
-        if (!res.ok) throw new Error("Failed to fetch users");
-        const data = await res.json();
-        setUsers(data);
+        const users = await getUsers();
+        setUsers(users);
         setFetchTime(Date.now() - start);
       } catch (error) {
         console.error("Error fetching users:", error);

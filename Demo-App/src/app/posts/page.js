@@ -2,7 +2,7 @@ import { getRedisClient } from "@/lib/redis";
 import Link from "next/link";
 import PostList from "@/components/PostList";
 
-export const revalidate = 0;
+export const revalidate = 0; // Disable ISR for this page
 
 export default async function PostsPage() {
   const redisClient = await getRedisClient();
@@ -20,7 +20,7 @@ export default async function PostsPage() {
     const res = await fetch("https://jsonplaceholder.typicode.com/posts");
     if (!res.ok) throw new Error("Failed to fetch posts");
     posts = await res.json();
-    await redisClient.setEx(cacheKey, 60, JSON.stringify(posts));
+    await redisClient.setEx(cacheKey, 60, JSON.stringify(posts)); // Cache with 60-second TTL
     console.log(`🔧 [Redis] Stored key="${cacheKey}" in cache`);
   }
 

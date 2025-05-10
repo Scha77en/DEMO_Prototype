@@ -88,11 +88,30 @@ The REDIS_URL environment variable tells the app where to connect to Redis.
 
 So the app can talk to the local Redis container running via Docker.
 
+## Pages Overview: Posts (SSR) and Users (CSR)
+
+This demo includes two pages to demonstrate both **Server-Side Rendering (SSR)** and **Client-Side Rendering (CSR)**:
+
+### **Posts Page (/posts)**
+- **Rendering Type**: **Server-Side Rendering (SSR)**.
+- **Why SSR?**
+  - The posts page fetches data on the server before rendering the page. This ensures that the data is available when the page is sent to the client, improving SEO and reducing the time to first meaningful paint.
+  - Redis is used to cache the data server-side, reducing API calls and improving performance for repeat visits.
+
+### **Users Page (/users)**
+- **Rendering Type**: **Client-Side Rendering (CSR)**.
+- **Why CSR?**
+  - The users page fetches data dynamically on the client after the initial page load. This approach demonstrates how to handle data fetching in a client component.
+  - A custom API (`/api/users`) is used to fetch data from Redis or the external API, showcasing how server-side caching can still benefit CSR.
+  - A loading state (`Loading users...`) is displayed while the data is being fetched, ensuring a smooth user experience.
+
+By implementing both SSR and CSR, this demo highlights the flexibility of Next.js and how different rendering strategies can be used based on the requirements of the application.
+
 ## Performance
 
 ### **Redis Fetch Times**
 
-#### **when you first visit : http:/localhost:3000/posts**
+#### **when you first visit : http://localhost:3000/posts or http://localhost:3000/users**
 
 ***Cache MISS*** shows the very first request where your app has to reach out over the network.
 
@@ -139,3 +158,9 @@ So the app can talk to the local Redis container running via Docker.
 
 - **CDN for Static Assets** Serving JavaScript, CSS and images via a Content Delivery Network so users worldwide download assets from the nearest edge location, cutting latency.
 
+ **Future Consideration**  
+  If the app needs to scale further or handle a large number of client-side requests, reintroducing an API route (e.g., `/api/users`) could be beneficial. 
+  - **Why?**  
+    - Centralizes request handling, making it easier to monitor, log, and secure client requests.
+    - Allows the API to scale independently of the client-side logic.
+    - Provides a standard interface for other parts of the app or external systems to consume data.
