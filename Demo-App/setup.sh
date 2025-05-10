@@ -8,11 +8,47 @@ NC="\033[0m" # No Color
 
 echo -e "${GREEN}🔧  Starting project setup...${NC}"
 
-# 1. Check for required commands
-for cmd in git node npm docker docker-compose; do
+# 1. Check for required commands and install if missing
+REQUIRED_COMMANDS=("git" "node" "npm" "docker" "docker-compose")
+for cmd in "${REQUIRED_COMMANDS[@]}"; do
   if ! command -v $cmd &> /dev/null; then
     echo -e "${RED}✖  Required command not found: $cmd${NC}"
-    exit 1
+    read -p "⚠️  Would you like to install $cmd now? (y/N) " INSTALL_NOW
+    if [[ "${INSTALL_NOW}" == "y" ]]; then
+      case $cmd in
+        git)
+          echo -e "${GREEN}📥  Installing Git...${NC}"
+          sudo apt update && sudo apt install -y git
+          ;;
+        node)
+          echo -e "${GREEN}📥  Installing Node.js...${NC}"
+          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+          sudo apt install -y nodejs
+          ;;
+        npm)
+          echo -e "${GREEN}📥  Installing npm...${NC}"
+          sudo apt install -y npm
+          ;;
+        docker)
+          echo -e "${GREEN}📥  Installing Docker...${NC}"
+          sudo apt update && sudo apt install -y docker.io
+          sudo systemctl start docker
+          sudo systemctl enable docker
+          ;;
+        docker-compose)
+          echo -e "${GREEN}📥  Installing Docker Compose...${NC}"
+          sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          ;;
+        *)
+          echo -e "${RED}⚠️  Unable to install $cmd automatically. Please install it manually.${NC}"
+          exit 1
+          ;;
+      esac
+    else
+      echo -e "${RED}⚠️  $cmd is required. Please install it manually and re-run the script.${NC}"
+      exit 1
+    fi
   fi
 done
 echo -e "${GREEN}✔  All required tools are installed.${NC}"
@@ -37,7 +73,6 @@ echo -e "${GREEN}✔  Redis is running on localhost:6379.${NC}"
 # 4. Install NPM dependencies
 echo -e "${GREEN}📥  Installing NPM dependencies...${NC}"
 npm install
-npm install framer-motion
 echo -e "${GREEN}✔  Dependencies installed.${NC}"
 
 # 5. (Optional) Build & start in production mode
